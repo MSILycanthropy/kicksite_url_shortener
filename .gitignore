@@ -32,3 +32,4 @@ kicksite_url_shortener-*.tar
 npm-debug.log
 /assets/node_modules/
 
+.envrc
