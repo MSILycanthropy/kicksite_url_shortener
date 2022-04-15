@@ -39,6 +39,29 @@ defmodule KicksiteUrlShortener.Shortener do
   @doc """
   Gets a single link by hash
 
+  Returns {:error, error} if the Link does not exist.
+
+  ## Examples
+
+      iex> get_link_by_hash("abc")
+      %Link{}
+
+      iex> get_link_by_hash("def")
+      {:error, "No results"}
+
+  """
+  def get_link_by_hash(hash) do
+    Repo.get_by(Link, hash: hash)
+    |> case do
+      nil -> {:error, "No results"}
+      result -> result
+    end
+  end
+
+  @spec get_link_by_hash!(any) :: any
+  @doc """
+  Gets a single link by hash
+
   Raises `Ecto.NoResultsError` if the Link does not exist.
 
   ## Examples
@@ -66,7 +89,7 @@ defmodule KicksiteUrlShortener.Shortener do
   def create_link(url, expires_in \\ "") do
     hash = Link.generate_hash(url)
     expires_at = Link.generate_expiration(expires_in)
-
+    IO.inspect expires_at
     %Link{}
     |> Link.changeset(%{ url: url, hash: hash, expires_at: expires_at })
     |> Repo.insert()

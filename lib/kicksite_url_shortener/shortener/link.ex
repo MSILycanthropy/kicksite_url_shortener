@@ -22,19 +22,26 @@ defmodule KicksiteUrlShortener.Shortener.Link do
   def generate_hash(url) do
     salt = DateTime.utc_now |> DateTime.to_unix(:millisecond)
 
-    :crypto.hash(:md5, "#{url}#{salt}}") |> Base.encode64 |> String.slice(0,8)
+    :crypto.hash(:md5, "#{url}#{salt}}")
+    |> Base.url_encode64
+    |> String.slice(0,12)
+    |> String.downcase
   end
 
+  @spec generate_expiration(nil | binary) :: nil | NaiveDateTime.t()
   @doc false
   def generate_expiration(expires_in) do
     handle_result = fn
-      {result, _} -> DateTime.utc_now |> DateTime.add(result * 60, :second)
+      {result, _} -> NaiveDateTime.utc_now |> NaiveDateTime.add(result * 60, :second)
       :error -> nil
     end
 
-    expires_in
-    |> Integer.parse
-    |> handle_result.()
+    case expires_in do
+      nil -> nil
+      _ -> expires_in
+          |> Integer.parse
+          |> handle_result.()
+    end
   end
 
   @doc false
