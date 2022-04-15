@@ -24,7 +24,7 @@ defmodule KicksiteUrlShortener.Shortener.Link do
 
     :crypto.hash(:md5, "#{url}#{salt}}")
     |> Base.url_encode64
-    |> String.slice(0,8)
+    |> String.slice(0,12)
     |> String.downcase
   end
 
